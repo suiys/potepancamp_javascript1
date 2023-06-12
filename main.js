@@ -32,30 +32,37 @@ function countUpTimer() {
 }
 
 function clickStartButton() {
+  startClickedTime = Date.now();
+  countUpTimer();
+
   startButton.disabled = true;
   stopButton.disabled = false;
   resetButton.disabled = false;
-
-  startClickedTime = Date.now();
-  countUpTimer();
 }
 
 function clickStopButton() {
-  startButton.disabled = false;
-  stopButton.disabled = true;
-  resetButton.disabled = false;
-
   clearInterval(timerId);
   //タイマーを一時停止した際に、それまでの経過時間をストックする
   throughTimeOnRestart += Date.now() - startClickedTime;
+
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  resetButton.disabled = false;
 }
 
 function clickResetButton() {
-  startButton.disabled = false;
-  stopButton.disabled = true;
-  resetButton.disabled = true;
-
+  timer.innerHTML = '00 : 00 : 00 : 00';
   throughTime = 0;
   throughTimeOnRestart = 0;
-  timer.innerHTML = '00 : 00 : 00 : 00';
+
+  //計測中にリセットボタンが押された場合はタイマーをリセットして計測し直す
+  if (startButton.disabled == true) {
+    clearInterval(timerId);
+    clickStartButton();
+  //タイマーが一時停止しているときにリセットボタンが押された場合はボタンの属性のみ変更
+  } else {
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = true;
+  }
 }
